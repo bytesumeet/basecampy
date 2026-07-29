@@ -1,0 +1,21 @@
+{
+    "name": "project_camp_backend",
+    "version": "1.0.0",
+    "description": "a project management application for learning backend by hitesh sir",
+    "keywords": [
+        "learning",
+        "backend",
+        "api's"
+    ],
+    "author": "sumit pal",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "node index.js",
+        "format": "npx prettier . --write"
+    },
+    "devDependencies": {
+        "prettier": "3.9.6"
+    }
+}
