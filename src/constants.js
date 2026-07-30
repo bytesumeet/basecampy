@@ -12,6 +12,7 @@ const Task_Status_Enum = {
     DONE: "done",
 };
 const AVAILABLE_TASK_STATUSES = Object.values(Task_Status_Enum);
+const MONGODB_URI = process.env.MONGODB_URI
 
 export {
     PORT,
@@ -19,5 +20,6 @@ export {
     USER_ROLES_ENUM,
     AVAILABLE_USER_ROLES,
     Task_Status_Enum,
-    AVAILABLE_TASK_STATUSES,
+	AVAILABLE_TASK_STATUSES,
+	MONGODB_URI
 };
