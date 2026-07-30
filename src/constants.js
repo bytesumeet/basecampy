@@ -1,4 +1,4 @@
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT;
 const CORS_ORIGIN = process.env.CORS_ORIGIN?.split(",") || "*";
 const USER_ROLES_ENUM = {
     ADMIN: "admin",
@@ -6,20 +6,20 @@ const USER_ROLES_ENUM = {
     MEMBER: "member",
 };
 const AVAILABLE_USER_ROLES = Object.values(USER_ROLES_ENUM);
-const Task_Status_Enum = {
+const TASK_STATUS_ENUM = {
     TODO: "todo",
     IN_PROGRESS: "in_progress",
     DONE: "done",
 };
-const AVAILABLE_TASK_STATUSES = Object.values(Task_Status_Enum);
-const MONGODB_URI = process.env.MONGODB_URI
+const AVAILABLE_TASK_STATUSES = Object.values(TASK_STATUS_ENUM);
+const MONGODB_URI = `${process.env.MONGODB_URI}/basecamp`;
 
 export {
     PORT,
     CORS_ORIGIN,
     USER_ROLES_ENUM,
     AVAILABLE_USER_ROLES,
-    Task_Status_Enum,
-	AVAILABLE_TASK_STATUSES,
-	MONGODB_URI
+    TASK_STATUS_ENUM,
+    AVAILABLE_TASK_STATUSES,
+    MONGODB_URI,
 };
