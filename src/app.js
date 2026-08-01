@@ -24,4 +24,8 @@ app.use(
     }),
 );
 
+import healthCheckRouter from "./routes/healthcheck.route.js";
+
+app.use("/api/v1/health-check", healthCheckRouter);
+
 export default app;
