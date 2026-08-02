@@ -50,6 +50,11 @@ const userSchema = new Schema(
             trim: true,
             minlength: [8, "Password must be at least of 8 characters"],
         },
+        role: {
+            type: String,
+            enum: ["member", "admin", "project_admin"],
+            default: "member",
+        },
         isEmailVerified: {
             type: Boolean,
             default: false,
