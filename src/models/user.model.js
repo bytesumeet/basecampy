@@ -113,12 +113,12 @@ userSchema.methods.generateTemporaryToken = function () {
         .createHash("sha256")
         .update(unHashedToken)
         .digest("hex");
-	const tokenExpiry = Date.now() + (20 * 60 * 1000); // 20 minutes expiry to temporary token
-	return {
-		hashToken: hashedToken,
-		unHashToken: unHashedToken,
-		expiry: tokenExpiry
-	}
+    const tokenExpiry = Date.now() + 20 * 60 * 1000; // 20 minutes expiry to temporary token
+    return {
+        hashToken: hashedToken,
+        unHashToken: unHashedToken,
+        expiry: tokenExpiry,
+    };
 };
 
 export const User = model("User", userSchema);
