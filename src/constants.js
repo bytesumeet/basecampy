@@ -13,6 +13,12 @@ const TASK_STATUS_ENUM = {
 };
 const AVAILABLE_TASK_STATUSES = Object.values(TASK_STATUS_ENUM);
 const MONGODB_URI = `${process.env.MONGODB_URI}/basecamp`;
+const ACCESS_TOKEN_SECRET =
+    process.env.ACCESS_TOKEN_SECRET || "basecampyAccessTokenSecret";
+const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || "1d";
+const REFRESH_TOKEN_SECRET =
+    process.env.REFRESH_TOKEN_SECRET || "basecampyRefreshTokenSecret";
+const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || "10d";
 
 export {
     PORT,
@@ -22,4 +28,8 @@ export {
     TASK_STATUS_ENUM,
     AVAILABLE_TASK_STATUSES,
     MONGODB_URI,
+    ACCESS_TOKEN_SECRET,
+    ACCESS_TOKEN_EXPIRY,
+    REFRESH_TOKEN_SECRET,
+    REFRESH_TOKEN_EXPIRY,
 };
