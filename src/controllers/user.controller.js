@@ -30,9 +30,6 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const registerUser = AsyncHandler(async (req, res) => {
     const { username, email, password, fullName, role } = req.body;
-    if (!username || !email || !password || !fullName) {
-        throw new ApiError(400, "All credentials are required", []);
-    }
     const existingUser = await User.findOne({
         $or: [{ username }, { email }],
     });
@@ -54,7 +51,7 @@ const registerUser = AsyncHandler(async (req, res) => {
     const { hashToken, unHashToken, expiry } = user.generateTemporaryToken();
     user.emailVerificationToken = hashToken;
     user.emailVerificationExpiry = expiry;
-    user.save({ validateBeforeSave: false });
+    await user.save({ validateBeforeSave: false });
     await sendEmail({
         email: user?.email,
         subject: "Please verify your emailVerificationToken",

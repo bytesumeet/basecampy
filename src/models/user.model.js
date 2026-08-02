@@ -40,20 +40,13 @@ const userSchema = new Schema(
         },
         fullName: {
             type: String,
-            required: [true, "Full name is required"],
             trim: true,
-            minlength: [3, "Full name must be at least 3 characters"],
         },
         password: {
             type: String,
             required: [true, "Password is required"],
             trim: true,
             minlength: [8, "Password must be at least of 8 characters"],
-        },
-        role: {
-            type: String,
-            enum: ["member", "admin", "project_admin"],
-            default: "member",
         },
         isEmailVerified: {
             type: Boolean,
