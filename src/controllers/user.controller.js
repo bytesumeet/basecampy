@@ -30,7 +30,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const registerUser = AsyncHandler(async (req, res) => {
     const { username, email, password, fullName, role } = req.body;
-    const existingUser = await User.findOne({
+    const existingUser = await User.findOnelogoutUser({
         $or: [{ username }, { email }],
     });
     if (existingUser) {
@@ -127,4 +127,27 @@ const loginUser = AsyncHandler(async (req, res) => {
             ),
         );
 });
-export { registerUser, loginUser };
+
+const logoutUser = AsyncHandler(async (req, res) => {
+    const user = req.user;
+    if (!user) {
+        throw new ApiError(401, "Unauthorized request", []);
+    }
+    const choosenUser = await User.findByIdAndUpdate(user._id, {
+        $unset: {
+            refreshToken: 1, // this completely remove the refresh token field from user document
+        },
+    });
+
+    const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+    };
+    return res
+        .status(200)
+        .clearCookie("accessToken", cookieOptions)
+        .clearCookie("refreshToken", cookieOptions)
+        .json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+
+export { registerUser, loginUser, logoutUser };
