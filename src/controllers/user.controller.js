@@ -61,7 +61,7 @@ const registerUser = AsyncHandler(async (req, res) => {
         ),
     });
     const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken -isEmailVerified -forgotPasswordToken -forgotPasswordExpiry -emailVerificationToken -emailVerificationExpiry -avatar",
+        "-password -refreshToken -isEmailVerified -forgotPasswordToken -forgotPasswordExpiry -emailVerificationToken -emailVerificationExpiry",
     );
     if (!createdUser) {
         throw new ApiError(
@@ -90,8 +90,7 @@ const loginUser = AsyncHandler(async (req, res) => {
     if (!user) {
         throw new ApiError(404, "User not found", []);
     }
-    user.is;
-	const isPasswordCorrect = await user.isPasswordCorrect(password);
+    const isPasswordCorrect = await user.isPasswordCorrect(password);
     if (!isPasswordCorrect) {
         throw new ApiError(401, "Incorrect password", []);
     }
@@ -103,7 +102,7 @@ const loginUser = AsyncHandler(async (req, res) => {
         user._id,
     );
     const loggedInUser = await User.findById(user._id).select(
-        "-password -refreshToken -isEmailVerified -forgobravetPasswordToken -forgotPasswordExpiry -emailVerificationToken -emailVerificationExpiry -avatar",
+        "-password -refreshToken -isEmailVerified -forgobravetPasswordToken -forgotPasswordExpiry -emailVerificationToken -emailVerificationExpiry",
     );
     if (!loggedInUser) {
         throw new ApiError(
