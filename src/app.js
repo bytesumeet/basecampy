@@ -1,5 +1,6 @@
 import e from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { CORS_ORIGIN } from "./constants.js";
 const app = e();
 
@@ -24,10 +25,26 @@ app.use(
     }),
 );
 
+app.use(cookieParser());
+
 import healthCheckRouter from "./routes/healthcheck.route.js";
 import { userRouter } from "./routes/user.route.js";
 
 app.use("/api/v1/health-check", healthCheckRouter);
 app.use("/api/v1/users/auth", userRouter);
+
+app.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+
+    return res.status(statusCode).json({
+        statusCode,
+        success: false,
+        message,
+        errors: err.errors || [],
+        data: err.data || null,
+        stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    });
+});
 
 export default app;

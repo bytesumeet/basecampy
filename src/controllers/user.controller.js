@@ -81,4 +81,51 @@ const registerUser = AsyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser };
+const loginUser = AsyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    if (!email && !password) {
+        throw new ApiError(400, "Email and password are required", []);
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new ApiError(404, "User not found", []);
+    }
+    user.is;
+	const isPasswordCorrect = await user.isPasswordCorrect(password);
+    if (!isPasswordCorrect) {
+        throw new ApiError(401, "Incorrect password", []);
+    }
+    // const checkIsEmailVerified = user.isEmailVerified;
+    // if (!checkIsEmailVerified) {
+    // 	throw new ApiError(401, "Email is not verified", []);
+    // }
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+        user._id,
+    );
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -refreshToken -isEmailVerified -forgobravetPasswordToken -forgotPasswordExpiry -emailVerificationToken -emailVerificationExpiry -avatar",
+    );
+    if (!loggedInUser) {
+        throw new ApiError(
+            500,
+            "Something went wrong while creating the user",
+            [],
+        );
+    }
+    const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+    };
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
+        .json(
+            new ApiResponse(
+                200,
+                { user: loggedInUser, accessToken, refreshToken },
+                "User logged in successfully",
+            ),
+        );
+});
+export { registerUser, loginUser };

@@ -8,7 +8,11 @@ export const validate = (req, res, next) => {
     }
     const extractedErros = [];
     errors.array().map((error) => {
-        extractedErros.push({ [error.path]: error.msg });
+        extractedErros.push({
+            type: error.type,
+            value: error.value,
+            msg: error.msg,
+        });
     });
     throw new ApiError(422, "Recieved data is not vaild", extractedErros);
 };
