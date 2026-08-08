@@ -204,4 +204,40 @@ const verifyEmail = AsyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, loginUser, logoutUser, getCurrentUser };
+const resendVerificatonEmail = AsyncHandler(async (req, res) => {
+    const email = req.user?.email;
+    if (!email) {
+        throw new ApiError(400, "Email is required to send verification email");
+    }
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+    if (user.isEmailVerified) {
+        throw new ApiError(409, "Email is already verified");
+    }
+    const { hashToken, unHashToken, expiry } = user.generateTemporaryToken();
+    user.emailVerificationToken = hashToken;
+    user.emailVerificationExpiry = expiry;
+    await user.save({ validateBeforeSave: false });
+    await sendEmail({
+        email: email,
+        subject: "Please verify your emailVerificationToken",
+        mailgenContent: emailVerificationMailgenContent(
+            user.username,
+            `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashToken}`,
+        ),
+    });
+    return res
+        .status(200)
+        .json(new ApiResponse(200, "Verification email sent"));
+});
+
+export {
+    registerUser,
+    loginUser,
+    logoutUser,
+    getCurrentUser,
+    verifyEmail,
+    resendVerificatonEmail,
+};

@@ -4,6 +4,8 @@ import {
     loginUser,
     logoutUser,
     registerUser,
+    resendVerificatonEmail,
+    verifyEmail,
 } from "../controllers/user.controller.js";
 import { validate } from "../middlewares/validator.middleware.js";
 import {
@@ -19,5 +21,10 @@ userRouter
 userRouter.route("/login").post(userLoginValidator(), validate, loginUser);
 userRouter.route("/logout").post(verifyJWT, logoutUser);
 userRouter.route("/current-user").get(verifyJWT, getCurrentUser);
+userRouter.route("/verify-email/:verificationToken").get(verifyEmail);
+user.route("/resend-verification-email").post(
+    verifyJWT,
+    resendVerificatonEmail,
+);
 
 export { userRouter };
