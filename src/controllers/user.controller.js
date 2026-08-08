@@ -7,6 +7,7 @@ import {
     emailVerificationMailgenContent,
     forgotPasswordMailgenContent,
 } from "../utils/mail.js";
+import crypto from "crypto";
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -167,6 +168,40 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
                 "User fetched successfully",
             ),
         );
+});
+
+const verifyEmail = AsyncHandler(async (req, res) => {
+    const { verificationToken } = req.params; // takes the verification token from the request parameters
+    if (!verificationToken) {
+        throw new ApiError(400, "Email verification token is required", []);
+    }
+    const hashVerifcationToken = crypto
+        .createHash("sha256")
+        .update(verificationToken)
+        .digest("hex");
+    const user = await User.findOne({
+        emailVerificationToken: hashVerifcationToken,
+        emailVerificationExpiry: {
+            // should be grater than current time if the expiry is less than current time than it means token is expired
+            $gt: Date.now(), // check if the expiry is greater than current time
+        },
+    });
+    if (!user) {
+        throw new ApiError(404, "Token is invalid or expired", []);
+    }
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpiry = undefined;
+    user.isEmailVerified = true;
+    await user.save({ validateBeforeSave: false });
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {
+                isEmailVerified: user.isEmailVerified,
+            },
+            "Email verified successfully",
+        ),
+    );
 });
 
 export { registerUser, loginUser, logoutUser, getCurrentUser };

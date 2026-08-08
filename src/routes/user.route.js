@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-	getCurrentUser,
+    getCurrentUser,
     loginUser,
     logoutUser,
     registerUser,
