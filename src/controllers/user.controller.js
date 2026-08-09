@@ -8,6 +8,8 @@ import {
     forgotPasswordMailgenContent,
 } from "../utils/mail.js";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
+import { REFRESH_TOKEN_SECRET } from "../constants.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -233,6 +235,56 @@ const resendVerificatonEmail = AsyncHandler(async (req, res) => {
         .json(new ApiResponse(200, "Verification email sent"));
 });
 
+const refreshAccessToken = AsyncHandler(async (req, res) => {
+    const requestedRefreshToken =
+        req.cookies?.refreshToken ||
+        req.body.refreshToken ||
+        req.header("Authorization")?.replace("Bearer ", "");
+    if (!requestedRefreshToken) {
+        throw new ApiError(401, "Unauthorized aceess");
+    }
+    try {
+        const decodedToken = jwt.verify(
+            requestedRefreshToken,
+            REFRESH_TOKEN_SECRET,
+        );
+        const user = await User.findById(decodedToken?._id).select(
+            "-password -refreshToken -isEmailVerified -forgobravetPasswordToken -forgotPasswordExpiry -emailVerificationToken -emailVerificationExpiry ",
+        );
+        if (!user) {
+            throw new ApiError(404, "User not found");
+        }
+        if (requestedRefreshToken !== user?.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired");
+        }
+        const { accessToken, refreshToken: newRefreshToken } =
+            await generateAccessAndRefreshTokens(user._id);
+        user.refreshToken = newRefreshToken;
+        await user.save({ validateBeforeSave: false });
+        const cookieOptions = {
+            httpOnly: true,
+            secure: true,
+        };
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, cookieOptions)
+            .cookie("refreshToken", newRefreshToken, cookieOptions)
+            .json(
+                new ApiResponse(
+                    200,
+                    {
+                        user,
+                        accessToken,
+                        refreshToken: newRefreshToken,
+                    },
+                    "Access token has been refreshed successfully",
+                ),
+            );
+    } catch (error) {
+        throw new ApiError(401, "Invalid refresh token");
+    }
+});
+
 export {
     registerUser,
     loginUser,
@@ -240,4 +292,5 @@ export {
     getCurrentUser,
     verifyEmail,
     resendVerificatonEmail,
+    refreshAccessToken,
 };
