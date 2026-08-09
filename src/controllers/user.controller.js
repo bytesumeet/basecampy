@@ -13,6 +13,7 @@ import {
     FORGOT_PASSWORD_REDIRECT_URL,
     REFRESH_TOKEN_SECRET,
 } from "../constants.js";
+import { log } from "console";
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -62,7 +63,7 @@ const registerUser = AsyncHandler(async (req, res) => {
         subject: "Please verify your email address",
         mailgenContent: emailVerificationMailgenContent(
             user.username,
-            `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashToken}`,
+            `${req.protocol}://${req.get("host")}/api/v1/users/auth/verify-email/${unHashToken}`,
         ),
     });
 
@@ -165,7 +166,8 @@ const getCurrentUser = AsyncHandler(async (req, res) => {
 });
 
 const verifyEmail = AsyncHandler(async (req, res) => {
-    const { verificationToken } = req.params;
+	const { verificationToken } = req.params;
+	console.log(verificationToken)
     if (!verificationToken) {
         throw new ApiError(400, "Email verification token is required");
     }
