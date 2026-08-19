@@ -13,7 +13,6 @@ import {
     FORGOT_PASSWORD_REDIRECT_URL,
     REFRESH_TOKEN_SECRET,
 } from "../constants.js";
-import { log } from "console";
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {

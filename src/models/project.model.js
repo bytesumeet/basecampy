@@ -11,11 +11,12 @@ const projectSchema = new Schema(
         description: {
             type: String,
             required: true,
-            createdBy: { // reference to the user who created the project
-                type: Schema.Types.ObjectId,
-                ref: "User",
-            },
-		},
+        },
+        createdBy: {
+            // reference to the user who created the project
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        },
     },
     {
         timestamps: true,
