@@ -29,9 +29,11 @@ app.use(cookieParser());
 
 import healthCheckRouter from "./routes/healthcheck.route.js";
 import { userRouter } from "./routes/user.route.js";
+import { projectRouter } from "./routes/project.route.js";
 
 app.use("/api/v1/health-check", healthCheckRouter);
 app.use("/api/v1/users/auth", userRouter);
+app.use("/api/v1/projects", projectRouter);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
