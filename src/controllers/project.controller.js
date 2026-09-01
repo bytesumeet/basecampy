@@ -272,7 +272,32 @@ const updateProjectMemberRole = AsyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, "Project member role updated successfully"));
 });
-const deleteProjectMember = AsyncHandler(async (req, res) => {});
+const deleteProjectMember = AsyncHandler(async (req, res) => {
+    const { projectId, userId } = req.params;
+    if (!projectId || !userId) {
+        throw new ApiError(400, "Project id and user id are required");
+    }
+    let projectMember = await ProjectMember.findOne({
+        user: userId,
+        project: projectId,
+    });
+    if (!projectMember) {
+        throw new ApiError(404, "Project member doesn't exists");
+    }
+    projectMember = await ProjectMember.findByIdAndDelete(projectMember._id);
+    if (!projectMember) {
+        throw new ApiError(404, "Project member not found");
+    }
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                projectMember,
+                "Project member removed successfully",
+            ),
+        );
+});
 
 export {
     getProjects,
