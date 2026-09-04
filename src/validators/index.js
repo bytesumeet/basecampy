@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { AVAILABLE_USER_ROLES } from "../constants.js";
 
 export const userRegistrationValidator = () => {
     return [
@@ -96,5 +97,29 @@ export const userResetForgotPasswordValidator = () => {
             .withMessage(
                 "Password must be at least 8 characters with 1 uppercase, 1 lowercase, 1 number, and 1 special character",
             ),
+    ];
+};
+
+export const createProjectValidators = () => {
+    return [
+        body("name").notEmpty().withMessage("Name is required"),
+        body("description").optional(),
+    ];
+};
+
+export const addMemberToProject = () => {
+    return [
+        body("email")
+            .notEmpty()
+            .withMessage("Email is required")
+            .trim()
+            .isEmail()
+            .withMessage("Please provide a valid email"),
+        body("role")
+            .notEmpty()
+            .withMessage("Role is required")
+            .trim()
+            .isIn(AVAILABLE_USER_ROLES)
+            .withMessage("Role is invalid"),
     ];
 };
