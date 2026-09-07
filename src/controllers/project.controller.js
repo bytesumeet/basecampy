@@ -122,7 +122,7 @@ const getProjects = AsyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(
-            new ApiResponse(200, projects[0], "Projects fetched successfully"),
+            new ApiResponse(200, projects, "Projects fetched successfully"),
         );
 });
 const getProjectById = AsyncHandler(async (req, res) => {
@@ -152,20 +152,10 @@ const addMemberToProject = AsyncHandler(async (req, res) => {
     if (!user.isEmailVerified) {
         throw new ApiError(403, "User email is not verified");
     }
-    await ProjectMember.findByIdAndUpdate(
-        {
-            user: new mongoose.Types.ObjectId(user._id), // owner of project
-            project: new mongoose.Types.ObjectId(projectId),
-        },
-        {
-            user: new mongoose.Types.ObjectId(user._id),
-            project: new mongoose.Types.ObjectId(projectId),
-            role: role,
-        },
-        {
-            new: true,
-            upsert: true,
-        },
+    await ProjectMember.findOneAndUpdate(
+        { user: user._id, project: projectId },
+        { user: user._id, project: projectId, role },
+        { new: true, upsert: true },
     );
     return res
         .status(201)
@@ -177,7 +167,7 @@ const addMemberToProject = AsyncHandler(async (req, res) => {
             ),
         );
 });
-const getProjectMember = AsyncHandler(async (req, res) => {
+const getProjectMembers = AsyncHandler(async (req, res) => {
     const projectId = req.params.projectId;
     if (!projectId) {
         throw new ApiError(400, "Project ID is required");
@@ -270,7 +260,7 @@ const updateProjectMemberRole = AsyncHandler(async (req, res) => {
     }
     return res
         .status(200)
-        .json(new ApiResponse(200, "Project member role updated successfully"));
+        .json(new ApiResponse(200, projectMemberWithUpdatedRole, "Project member role updated successfully"));
 });
 const deleteProjectMember = AsyncHandler(async (req, res) => {
     const { projectId, userId } = req.params;

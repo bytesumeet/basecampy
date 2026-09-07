@@ -107,7 +107,7 @@ export const createProjectValidators = () => {
     ];
 };
 
-export const addMemberToProject = () => {
+export const addMemberToProjectValidators = () => {
     return [
         body("email")
             .notEmpty()
