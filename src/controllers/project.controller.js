@@ -296,7 +296,7 @@ export {
     updateProject,
     deleteProject,
     addMemberToProject,
-    getProjectMember,
+    getProjectMembers,
     updateProjectMemberRole,
     deleteProjectMember,
 };
